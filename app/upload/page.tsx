@@ -73,6 +73,18 @@ export default function UploadChecklistPage() {
       <br />
       <br />
 
+      <button
+        onClick={async () => {
+          await fetch("/api/save-kb", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: result }),
+          });
+        }}
+      >
+        Save Knowledge Base
+      </button>
+
       {error && (
         <div style={{ color: "red", whiteSpace: "pre-wrap" }}>{error}</div>
       )}
