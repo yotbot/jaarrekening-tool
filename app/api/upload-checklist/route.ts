@@ -1,47 +1,73 @@
-import { NextResponse } from "next/server";
-import { execFile } from "node:child_process";
-import { writeFile } from "node:fs/promises";
-import { randomUUID } from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+import { writeFile, unlink } from "fs/promises";
 import path from "path";
+import { spawn } from "child_process";
 
-export async function POST(req: Request) {
-  const data = await req.formData();
-  const file = data.get("file") as File;
+export const runtime = "nodejs"; // Node-API routes
 
-  if (!file) {
-    return NextResponse.json({ error: "No file" }, { status: 400 });
-  }
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
 
-  // file opslaan
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
 
-  const filename = `${randomUUID()}.xlsm`;
-  const filepath = path.join("/tmp", filename);
+    // --- Save uploaded file to /tmp ---
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const tempPath = path.join("/tmp", `checklist-${Date.now()}.xlsx`);
+    await writeFile(tempPath, buffer);
 
-  await writeFile(filepath, buffer);
+    // --- Run Python script ---
+    const pythonPath = "python3"; // or "python" depending on your system
+    const scriptPath = path.join(process.cwd(), "python/convert_checklist.py");
 
-  // python script uitvoeren
-  const python = "/usr/bin/python3"; // of "python3"
-  const script = "convert_checklist.py";
+    const pythonProcess = spawn(pythonPath, [scriptPath, tempPath]);
 
-  return new Promise((resolve) => {
-    execFile(python, [script, filepath], (error, stdout, stderr) => {
-      if (error) {
-        resolve(
-          NextResponse.json({ error: stderr.toString() }, { status: 500 })
-        );
-        return;
-      }
+    let output = "";
+    let errorOutput = "";
 
-      try {
-        const json = JSON.parse(stdout);
-        resolve(NextResponse.json({ data: json }));
-      } catch (e) {
-        resolve(
-          NextResponse.json({ error: "JSON parse error" }, { status: 500 })
-        );
-      }
+    pythonProcess.stdout.on("data", (data) => {
+      output += data.toString();
     });
-  });
+
+    pythonProcess.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
+
+    const exitCode: number = await new Promise((resolve) => {
+      pythonProcess.on("close", resolve);
+    });
+
+    // Delete uploaded temp file
+    await unlink(tempPath);
+
+    if (exitCode !== 0) {
+      return NextResponse.json(
+        { error: "Python script failed", details: errorOutput },
+        { status: 500 }
+      );
+    }
+
+    // --- Parse JSON output from python ---
+    let json;
+    try {
+      json = JSON.parse(output);
+    } catch (e) {
+      return NextResponse.json(
+        { error: "Invalid JSON output from Python", output },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ items: json }, { status: 200 });
+  } catch (error) {
+    console.error("Upload failed:", error);
+    return NextResponse.json(
+      { error: "Server error", details: String(error) },
+      { status: 500 }
+    );
+  }
 }

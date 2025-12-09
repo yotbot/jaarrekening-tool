@@ -179,7 +179,7 @@ def convert_excel_to_json(file_path):
     all_items = []
 
     # We lezen ZONDER header zodat we zelf de header-rij kunnen detecteren
-    xls = pd.ExcelFile(file_path)
+    xls = pd.ExcelFile(file_path, engine="openpyxl")
 
     for sheet in xls.sheet_names:
 
@@ -187,7 +187,7 @@ def convert_excel_to_json(file_path):
         if sheet != "Accountantscontrole":
             continue
 
-        df_raw = pd.read_excel(file_path, sheet_name=sheet, header=None)
+        df_raw = pd.read_excel(file_path, sheet_name=sheet, header=None, engine="openpyxl")
 
         structured = build_structured_df(df_raw)
         if structured is None:
