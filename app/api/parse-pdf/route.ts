@@ -1,7 +1,7 @@
-export const runtime = "nodejs";
+export const runtime = "nodejs"; // BELANGRIJK
 
 import { NextRequest, NextResponse } from "next/server";
-import { pdfToText } from "@/lib/pdfToText";
+import { pdfToPages } from "@/lib/pdfToPages";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,9 +13,12 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const text = await pdfToText(buffer);
+    const pages = await pdfToPages(buffer);
 
-    return NextResponse.json({ text });
+    return NextResponse.json({
+      totalPages: pages.length,
+      pages: pages.slice(0, 3), // preview only
+    });
   } catch (err: any) {
     console.error("PDF ERROR:", err);
     return NextResponse.json(
