@@ -110,7 +110,7 @@ export function parseChecklistExcel(buffer: Buffer) {
     // new main question
     currentItem = {
       sheet: targetSheet,
-      check: vraagRaw,
+      vraag: vraagRaw,
       subvragen: [],
     };
 
