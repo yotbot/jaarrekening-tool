@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       totalPages: pages.length,
-      pages: pages.slice(0, 3), // preview only
+      pages: pages,
     });
   } catch (err: any) {
     console.error("PDF ERROR:", err);
