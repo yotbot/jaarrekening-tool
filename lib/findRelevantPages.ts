@@ -1,73 +1,40 @@
 // lib/findRelevantPages.ts
+// RAG retrieval: embed (vraag + subvragen) → compare to page embeddings → return top N relevant pages
 
-export type PageChunk = {
+import { embedChecklistVraag } from "@/lib/embedChecklistVraag";
+import { cosineSimilarity } from "@/lib/similarity";
+
+export interface PageEmbedding {
   page: number;
   text: string;
-};
-
-export type RelevantPage = {
-  page: number;
-  score: number;
-  text: string;
-};
-
-export function extractKeywords(question: string): string[] {
-  return question
-    .toLowerCase()
-    .split(/[^a-zA-Z0-9]+/)
-    .filter((w) => w.length > 3 && !STOPWORDS.has(w));
+  embedding: number[];
 }
 
-const STOPWORDS = new Set([
-  "de",
-  "het",
-  "een",
-  "dat",
-  "die",
-  "voor",
-  "van",
-  "den",
-  "met",
-  "naar",
-  "aan",
-  "als",
-  "bij",
-  "niet",
-  "wordt",
-  "moet",
-  "heeft",
-  "hebben",
-  "volgens",
-  "rekening",
-  "jaarrekening",
-  "balans",
-  "toelichting",
-]);
+export interface RelevantPage {
+  page: number;
+  score: number;
+}
 
-export function findRelevantPages(
-  question: string,
-  pages: PageChunk[],
-  maxResults: number = 3
-): RelevantPage[] {
-  const keywords = extractKeywords(question);
+export async function findRelevantPages(
+  vraag: string,
+  subvragen: string[] | undefined,
+  pages: PageEmbedding[],
+  topN: number = 3
+): Promise<RelevantPage[]> {
+  if (!vraag.trim()) return [];
 
-  const scored = pages
-    .map((p) => {
-      let score = 0;
-      const lower = p.text.toLowerCase();
+  // 1. Embed vraag + subvragen together (best practice)
+  const vraagVector = await embedChecklistVraag(vraag, subvragen);
 
-      for (const kw of keywords) {
-        if (lower.includes(kw)) score += 1;
-      }
+  // 2. Compute similarity score for every page
+  const scored = pages.map((p) => ({
+    page: p.page,
+    score: cosineSimilarity(vraagVector, p.embedding),
+  }));
 
-      return {
-        page: p.page,
-        text: p.text,
-        score,
-      };
-    })
-    .filter((p) => p.score > 0)
-    .sort((a, b) => b.score - a.score);
+  // 3. Sort (highest similarity first)
+  const ranked = scored.sort((a, b) => b.score - a.score);
 
-  return scored.slice(0, maxResults);
+  // 4. Select top N most relevant pages
+  return ranked.slice(0, topN);
 }
