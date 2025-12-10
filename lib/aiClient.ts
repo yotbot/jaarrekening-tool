@@ -15,6 +15,7 @@ export const groq = new Groq({
 // 2. Standaardmodel voor je analyseroute
 // Je gebruikt nu tijdelijk 8B; dit kun je later eenvoudig aanpassen.
 export const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+// export const DEFAULT_MODEL = "llama-3.1-8b-instant";
 
 // 3. (Optioneel) kleine helper voor JSON-mode calls
 // Handig als je later vaker strikt JSON wilt afdwingen.
