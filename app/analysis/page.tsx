@@ -6,9 +6,10 @@ import Step2Checklist from "@/components/analysis/Step2Checklist";
 import AnalysisPanel from "@/components/analysis/AnalysisPanel";
 
 export default function AnalysisWizardPage() {
-  const [step, setStep] = useState<1 | 2 | 3>(1); // 3 steps instead of 4
+  const [step, setStep] = useState<1 | 2 | 3>(1);
 
   const [pdfId, setPdfId] = useState<string | null>(null);
+  const [checklistId, setChecklistId] = useState<string | null>(null);
   const [sheetNames, setSheetNames] = useState<string[]>([]);
   const [checklistLoaded, setChecklistLoaded] = useState(false);
 
@@ -27,8 +28,9 @@ export default function AnalysisWizardPage() {
 
       {step === 2 && (
         <Step2Checklist
-          onChecklistReady={(sheets: string[]) => {
+          onChecklistReady={(sheets: string[], checklistId: string) => {
             setSheetNames(sheets);
+            setChecklistId(checklistId);
             setChecklistLoaded(true);
             setStep(3);
           }}
@@ -36,7 +38,13 @@ export default function AnalysisWizardPage() {
         />
       )}
 
-      {step === 3 && <AnalysisPanel pdfId={pdfId!} sheetNames={sheetNames} />}
+      {step === 3 && (
+        <AnalysisPanel
+          checklistId={checklistId!}
+          pdfId={pdfId!}
+          sheetNames={sheetNames}
+        />
+      )}
     </div>
   );
 }

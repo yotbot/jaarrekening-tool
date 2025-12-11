@@ -34,8 +34,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const checklistId = `checklist_${Date.now()}`;
+
     // Checklist in KV opslaan (alle items, met sheet veld)
-    await kv.set(`kb:${userId}:checklist`, items);
+    await kv.set(`kb:${userId}:${checklistId}:checklist`, items);
+    await kv.set(`kb:${userId}:${checklistId}:meta`, {
+      name: file.name,
+      uploadedAt: Date.now(),
+      sheetCount: sheetNames.length,
+    });
 
     return NextResponse.json({
       ok: true,

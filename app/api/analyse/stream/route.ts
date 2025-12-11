@@ -125,9 +125,19 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const pdfId = searchParams.get("pdfId");
+  const checklistId = searchParams.get("checklistId");
   const sheet = searchParams.get("sheet");
   const maxItemsParam = searchParams.get("maxItems");
   const maxItems = maxItemsParam ? Number(maxItemsParam) : 20;
+
+  console.log(
+    "🚀 Starting analysis stream for pdfId:",
+    pdfId,
+    "checklistId:",
+    checklistId,
+    "sheet:",
+    sheet
+  );
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -149,7 +159,10 @@ export async function GET(req: NextRequest) {
           percent: 2,
         });
 
-        const checklistRaw = await kv.get(`kb:${userId}:checklist`);
+        const checklistRaw = await kv.get(
+          `kb:${userId}:${checklistId}:checklist`
+        );
+        console.log("Checklist raw:", checklistRaw);
 
         if (!Array.isArray(checklistRaw)) {
           sendEvent(controller, {
@@ -309,9 +322,6 @@ ${q.contextText}
           });
 
           let raw = completion.choices[0]?.message?.content || "[]";
-
-          // Debug: kun je tijdelijk laten staan als je wilt
-          // console.log("LLM RAW OUTPUT:", raw);
 
           // Probeer JSON-array te extraheren (ook bij { "array": [...] })
           const batchResult = parseLlmArray(raw);

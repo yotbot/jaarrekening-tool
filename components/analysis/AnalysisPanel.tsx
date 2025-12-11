@@ -5,9 +5,11 @@ import ResultsList from "./ResultsList";
 
 export default function AnalysisPanel({
   pdfId,
+  checklistId,
   sheetNames,
 }: {
   pdfId: string;
+  checklistId: string;
   sheetNames: string[];
 }) {
   const [selectedSheet, setSelectedSheet] = useState(sheetNames[0] || "");
@@ -23,9 +25,10 @@ export default function AnalysisPanel({
     setStatusMessage("Analyse gestart…");
     setProgress(0);
 
-    const url = `/api/analyse/stream?pdfId=${pdfId}&sheet=${encodeURIComponent(
+    const url = `/api/analyse/stream?pdfId=${pdfId}&checklistId=${checklistId}&sheet=${encodeURIComponent(
       selectedSheet
     )}&maxItems=${maxItems}`;
+    console.log("Starting analysis with URL:", url);
 
     const evt = new EventSource(url);
 
