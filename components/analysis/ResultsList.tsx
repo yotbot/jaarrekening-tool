@@ -51,16 +51,11 @@ export default function ResultsList({
 
             {/* Subvragen */}
             {item.subvragen && item.subvragen.length > 0 && (
-              <details className="ml-4">
-                <summary className="cursor-pointer text-gray-700 text-sm">
-                  Subvragen
-                </summary>
-                <ul className="mt-1 list-disc ml-5 text-gray-600 text-sm">
-                  {item.subvragen.map((sv, i2) => (
-                    <li key={i2}>{sv}</li>
-                  ))}
-                </ul>
-              </details>
+              <ul className="mt-1 list-disc ml-5 text-gray-600 text-sm">
+                {item.subvragen.map((sv, i2) => (
+                  <li key={i2}>{sv}</li>
+                ))}
+              </ul>
             )}
 
             {/* Analyseblok – veilig met fallbacks */}

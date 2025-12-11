@@ -156,20 +156,6 @@ export default function AnalysisPanel({
         </button>
       </div>
 
-      {/* FILTERS */}
-      <div className="flex gap-4">
-        <label>Filter:</label>
-        <select
-          className="border p-2 rounded bg-white"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
-        >
-          <option value="all">Alles</option>
-          <option value="found">Gevonden</option>
-          <option value="notfound">Niet gevonden</option>
-        </select>
-      </div>
-
       {/* PROGRESS BAR */}
       <div className="space-y-2">
         <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
@@ -219,6 +205,19 @@ export default function AnalysisPanel({
       )}
 
       {/* RESULTATEN LIJST */}
+      {/* FILTERS */}
+      <div className="flex gap-4">
+        <label>Filter:</label>
+        <select
+          className="border p-2 rounded bg-white"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as any)}
+        >
+          <option value="all">Alles</option>
+          <option value="found">Gevonden</option>
+          <option value="notfound">Niet gevonden</option>
+        </select>
+      </div>
       <ResultsList results={filteredResults} loading={loading} />
     </div>
   );
