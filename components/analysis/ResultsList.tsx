@@ -36,8 +36,8 @@ export default function ResultsList({
 
   return (
     <div className="space-y-6">
-      {results.map((item, idx) => {
-        const analyse = item.analyse;
+      {results.map((r, idx) => {
+        const analyse = r.analyse;
         const gevonden = analyse?.gevonden ?? false;
         const score = analyse?.score ?? 0;
         const pagina = analyse?.pagina ?? null;
@@ -46,36 +46,30 @@ export default function ResultsList({
           "Geen nadere uitleg beschikbaar (analyse ontbreekt of faalde).";
 
         return (
-          <div key={idx} className="border rounded-lg p-4 bg-gray-50 space-y-2">
-            <p className="font-semibold text-gray-900">{item.vraag}</p>
+          <div
+            key={idx}
+            className={`p-4 rounded-xl border shadow-sm ${
+              r.analyse?.gevonden
+                ? "border-green-400 bg-green-50"
+                : "border-red-400 bg-red-50"
+            }`}
+          >
+            <p className="font-semibold text-gray-900">{r.vraag}</p>
 
-            {/* Subvragen */}
-            {item.subvragen && item.subvragen.length > 0 && (
-              <ul className="mt-1 list-disc ml-5 text-gray-600 text-sm">
-                {item.subvragen.map((sv, i2) => (
-                  <li key={i2}>{sv}</li>
+            {r.subvragen && r.subvragen?.length > 0 && (
+              <ul className="ml-6 mt-1 list-disc text-gray-700 text-sm">
+                {r.subvragen?.map((s, i) => (
+                  <li key={i}>{s}</li>
                 ))}
               </ul>
             )}
 
-            {/* Analyseblok – veilig met fallbacks */}
-            <div
-              className={`p-3 rounded ${
-                gevonden ? "bg-green-100" : "bg-red-100"
-              }`}
-            >
-              <p className="text-sm font-semibold">
-                {analyse
-                  ? gevonden
-                    ? "✔ Voorwaarde gevonden"
-                    : "✘ Voorwaarde niet (duidelijk) gevonden"
-                  : "⚠ Geen analysegegevens beschikbaar voor deze vraag"}
-              </p>
-              <p className="text-xs">
-                Pagina: {pagina ?? "—"} | Score: {score}
-              </p>
-              <p className="text-xs mt-1 text-gray-700">{uitleg}</p>
-            </div>
+            <p className="text-sm mt-2">
+              <b>Score:</b> {r.analyse?.score} — <b>Pagina:</b>{" "}
+              {r.analyse?.pagina ?? "—"}
+            </p>
+
+            <p className="text-sm text-gray-700 mt-1">{r.analyse?.uitleg}</p>
           </div>
         );
       })}

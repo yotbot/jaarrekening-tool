@@ -152,15 +152,14 @@ export default function AnalysisPanel({
       </div>
 
       {/* PROGRESS BAR */}
-      <div className="space-y-2">
-        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="bg-blue-600 h-3 transition-all"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="text-sm text-gray-600">{statusMessage}</p>
+      <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+        <div
+          className="bg-blue-600 h-3 rounded-full transition-all"
+          style={{ width: `${progress}%` }}
+        />
       </div>
+
+      <p className="text-sm text-gray-500">{statusMessage}</p>
 
       {/* SCORE OVERVIEW */}
       {results.length > 0 && (

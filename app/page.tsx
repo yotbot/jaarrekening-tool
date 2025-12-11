@@ -1,5 +1,9 @@
-export default function Home() {
+import WaveHero from "@/components/WaveHero";
+
+export default function HomePage() {
   return (
-    <div className="flex min-h-svh items-center justify-center bg-zinc-50 font-sans dark:bg-black"></div>
+    <div className="min-h-screen">
+      <WaveHero />
+    </div>
   );
 }
