@@ -4,6 +4,8 @@ import { useState } from "react";
 import ResultsList from "./ResultsList";
 import ScoreDonut from "../ScoreDonut";
 import { AnalyseResult } from "@/app/api/analyse/stream/route";
+import AnalysisHeader from "./AnalysisHeader";
+import FilterBar from "../FilterBar";
 
 export default function AnalysisPanel({
   pdfId,
@@ -109,7 +111,11 @@ export default function AnalysisPanel({
   // --------------------------------------------------
   return (
     <div className="p-6 bg-white rounded-xl shadow space-y-8">
-      <h2 className="text-2xl font-semibold">Analyse</h2>
+      <AnalysisHeader
+        pdfId={pdfId}
+        checklistId={checklistId}
+        sheet={selectedSheet}
+      />
 
       {/* SHEET + ACTION BUTTONS */}
       <div className="flex flex-wrap items-end gap-6">
@@ -195,18 +201,7 @@ export default function AnalysisPanel({
       )}
 
       {/* FILTERS */}
-      <div className="flex items-center gap-4">
-        <label className="text-gray-700 font-medium">Filter:</label>
-        <select
-          className="border p-2 rounded bg-white"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
-        >
-          <option value="all">Alles</option>
-          <option value="found">✔ Gevonden</option>
-          <option value="notfound">✘ Niet gevonden</option>
-        </select>
-      </div>
+      <FilterBar filter={filter} setFilter={setFilter} />
 
       {/* RESULT LIST */}
       <ResultsList results={filteredResults} loading={loading} />
