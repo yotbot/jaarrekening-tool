@@ -2,10 +2,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { kv } from "@vercel/kv";
 import { parseChecklistExcel } from "@/lib/parseChecklistExcel";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response("Unauthorized", { status: 401 });
   try {
     const form = await req.formData();
     const file = form.get("file") as File | null;
@@ -32,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Checklist in KV opslaan (alle items, met sheet veld)
-    await kv.set("kb:checklist", items);
+    await kv.set(`kb:${userId}:checklist`, items);
 
     return NextResponse.json({
       ok: true,

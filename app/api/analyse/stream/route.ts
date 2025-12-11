@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { kv } from "@vercel/kv";
 import { findRelevantPages, PageEmbedding } from "@/lib/findRelevantPages";
 import { groq, DEFAULT_MODEL } from "@/lib/aiClient";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
@@ -119,6 +120,8 @@ function parseLlmArray(raw: string): LlmResultItem[] {
 /* ---------- SSE Route (GET) ---------- */
 
 export async function GET(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response("Unauthorized", { status: 401 });
   const { searchParams } = new URL(req.url);
 
   const pdfId = searchParams.get("pdfId");
@@ -146,7 +149,7 @@ export async function GET(req: NextRequest) {
           percent: 2,
         });
 
-        const checklistRaw = await kv.get("kb:checklist");
+        const checklistRaw = await kv.get(`kb:${userId}:checklist`);
 
         if (!Array.isArray(checklistRaw)) {
           sendEvent(controller, {
@@ -180,7 +183,7 @@ export async function GET(req: NextRequest) {
 
         /* 2) PDF-pagina's ophalen */
 
-        const pagesRaw = await kv.get(`pdf:${pdfId}:pages`);
+        const pagesRaw = await kv.get(`pdf:${userId}:${pdfId}:pages`);
         if (!Array.isArray(pagesRaw)) {
           sendEvent(controller, {
             type: "error",

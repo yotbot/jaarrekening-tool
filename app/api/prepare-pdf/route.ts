@@ -9,10 +9,13 @@ import { kv } from "@vercel/kv";
 import { pdfToPages } from "@/lib/pdfToPages";
 import { embedManyValues } from "@/lib/embed";
 import type { PageEmbedding } from "@/lib/findRelevantPages";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response("Unauthorized", { status: 401 });
   try {
     const form = await req.formData();
     const file = form.get("file") as File | null;
@@ -56,7 +59,7 @@ export async function POST(req: NextRequest) {
     const pdfId = `pdf_${Date.now()}`;
 
     // 5. Store in KV
-    await kv.set(`pdf:${pdfId}:pages`, pagesWithEmbeddings);
+    await kv.set(`pdf:${userId}:${pdfId}:pages`, pagesWithEmbeddings);
 
     console.log(`💾 Stored embedded PDF as: pdf:${pdfId}:pages`);
 
