@@ -16,7 +16,7 @@ export default function ScoreDonut({
     { name: "Niet gevonden", value: notFound },
   ];
 
-  const COLORS = ["#22c55e", "#ef4444"]; // groen / rood
+  const COLORS = ["#30a81d", "#ff8400"]; // groen / rood
 
   return (
     <div className="w-64 h-64 relative">
@@ -25,7 +25,7 @@ export default function ScoreDonut({
           <Pie
             data={data}
             innerRadius={60}
-            outerRadius={80}
+            outerRadius={100}
             paddingAngle={4}
             dataKey="value"
           >
@@ -38,8 +38,8 @@ export default function ScoreDonut({
 
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold">{percent}%</span>
-        <span className="text-gray-500 text-sm mt-1">compliant</span>
+        <span className="text-3xl font-mono font-bold">{percent}%</span>
+        <span className="text-gray-500 text-sm font-mono mt-1">compliant</span>
       </div>
     </div>
   );

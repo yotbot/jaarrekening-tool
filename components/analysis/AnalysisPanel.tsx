@@ -4,7 +4,6 @@ import { useState } from "react";
 import ResultsList from "./ResultsList";
 import ScoreDonut from "../ScoreDonut";
 import { AnalyseResult } from "@/app/api/analyse/stream/route";
-import AnalysisHeader from "./AnalysisHeader";
 import FilterBar from "../FilterBar";
 
 export default function AnalysisPanel({
@@ -110,17 +109,28 @@ export default function AnalysisPanel({
   // UI
   // --------------------------------------------------
   return (
-    <div className="p-6 bg-white rounded-xl shadow space-y-8">
-      <AnalysisHeader
-        pdfId={pdfId}
-        checklistId={checklistId}
-        sheet={selectedSheet}
-      />
+    <div className="p-6 bg-white rounded-xl shadow space-y-4">
+      <div>
+        <dl className="grid gap-6 sm:grid-cols-3 font-mono">
+          <div>
+            <dd className="text-xs uppercase">PDF</dd>
+            <dt className="text-sm">{pdfId}</dt>
+          </div>
+          <div>
+            <dd className="text-xs uppercase">Checklist</dd>
+            <dt className="text-sm">{checklistId}</dt>
+          </div>
+          <div>
+            <dd className="text-xs uppercase">Sheet</dd>
+            <dt className="text-sm">{selectedSheet}</dt>
+          </div>
+        </dl>
+      </div>
 
       {/* SHEET + ACTION BUTTONS */}
-      <div className="flex flex-wrap items-end gap-6">
+      <div className="grid sm:grid-cols-3 gap-6">
         <div className="flex flex-col">
-          <label className="text-sm font-medium mb-1">Sheet</label>
+          <label className="text-sm font-mono mb-1">Sheet</label>
           <select
             value={selectedSheet}
             onChange={(e) => setSelectedSheet(e.target.value)}
@@ -132,39 +142,37 @@ export default function AnalysisPanel({
           </select>
         </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={() => startAnalyse(5)}
-            disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
-          >
-            {loading ? "…" : "Analyse eerste 5 checks"}
-          </button>
+        <button
+          onClick={() => startAnalyse(5)}
+          disabled={loading}
+          className="mt-6 px-12 py-6 font-mono uppercase rounded-xl text-sm font-medium border text-foreground bg-background cursor-pointer disabled:border-neutral-3 disabled:text-neutral-3"
+        >
+          Analyse eerste 5 checks
+        </button>
 
-          <button
-            onClick={() => startAnalyse(null)}
-            disabled={loading}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:bg-gray-400"
-          >
-            {loading ? "…" : "Volledige analyse"}
-          </button>
-        </div>
+        <button
+          onClick={() => startAnalyse(null)}
+          disabled={loading}
+          className="mt-6 px-12 py-6 font-mono uppercase rounded-xl text-sm font-medium border text-background bg-foreground cursor-pointer disabled:bg-neutral-3"
+        >
+          Volledige analyse
+        </button>
       </div>
 
       {/* PROGRESS BAR */}
-      <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+      <div className="w-full bg-gray-200 rounded-full h-5 shadow-inner">
         <div
-          className="bg-blue-600 h-3 rounded-full transition-all"
+          className="bg-yellow h-5 rounded-full transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <p className="text-sm text-gray-500">{statusMessage}</p>
+      <p className="text-sm font-sans text-gray-500">{statusMessage}</p>
 
       {/* SCORE OVERVIEW */}
       {results.length > 0 && (
-        <div className="p-6 bg-gray-50 border rounded-xl space-y-4">
-          <h3 className="text-lg font-semibold">
+        <div className="p-6 bg-gray-50 rounded-xl space-y-4 mb-8">
+          <h3 className="text-2xl font-sans font-semibold">
             Overzicht score voor: {selectedSheet}
           </h3>
 
@@ -179,7 +187,7 @@ export default function AnalysisPanel({
                   percent={stats.percent}
                 />
 
-                <div className="space-y-1 text-gray-700">
+                <div className="space-y-1 text-gray-700 font-mono">
                   <p>
                     <b>Totaal items:</b> {stats.total}
                   </p>
