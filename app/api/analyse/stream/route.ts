@@ -162,7 +162,6 @@ export async function GET(req: NextRequest) {
         const checklistRaw = await kv.get(
           `kb:${userId}:${checklistId}:checklist`
         );
-        console.log("Checklist raw:", checklistRaw);
 
         if (!Array.isArray(checklistRaw)) {
           sendEvent(controller, {
