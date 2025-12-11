@@ -63,20 +63,6 @@ export default function ResultsList({
               </details>
             )}
 
-            {/* Relevante pagina's */}
-            <div>
-              <p className="text-sm font-medium text-gray-700">
-                Relevante pagina&apos;s:
-              </p>
-              <ul className="ml-6 list-disc text-gray-600 text-sm">
-                {item.relevantPages?.map((rp, i3) => (
-                  <li key={i3}>
-                    Pagina {rp.page} — score {rp.score.toFixed(3)}
-                  </li>
-                )) ?? <li>Geen pagina-informatie beschikbaar.</li>}
-              </ul>
-            </div>
-
             {/* Analyseblok – veilig met fallbacks */}
             <div
               className={`p-3 rounded ${

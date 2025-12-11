@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import ResultsList from "./ResultsList";
+import ScoreDonut from "../ScoreDonut";
+import { AnalyseResult } from "@/app/api/analyse/stream/route";
 
 export default function AnalysisPanel({
   pdfId,
@@ -62,6 +64,23 @@ export default function AnalysisPanel({
       evt.close();
     };
   };
+
+  function getSheetStats(results: AnalyseResult[]) {
+    const total = results.length;
+    const found = results.filter((r) => r.analyse?.gevonden).length;
+    const notFound = total - found;
+
+    const avgScore =
+      results.reduce((sum, r) => sum + (r.analyse?.score || 0), 0) / total;
+
+    return {
+      total,
+      found,
+      notFound,
+      avgScore: Number(avgScore.toFixed(2)),
+      percent: Math.round((found / total) * 100),
+    };
+  }
 
   const filteredResults =
     filter === "all"
@@ -135,6 +154,41 @@ export default function AnalysisPanel({
       </div>
 
       {/* RESULTS */}
+      {results && (
+        <div className="mt-8 p-6 bg-white rounded-xl shadow">
+          <h3 className="text-lg font-semibold mb-4">
+            Overzicht score voor: {selectedSheet}
+          </h3>
+
+          {(() => {
+            const stats = getSheetStats(results);
+            return (
+              <div className="flex items-center gap-10">
+                <ScoreDonut
+                  found={stats.found}
+                  notFound={stats.notFound}
+                  percent={stats.percent}
+                />
+
+                <div className="space-y-2 text-gray-700">
+                  <p>
+                    <b>Totaal items:</b> {stats.total}
+                  </p>
+                  <p>
+                    <b>Gevonden:</b> {stats.found}
+                  </p>
+                  <p>
+                    <b>Niet gevonden:</b> {stats.notFound}
+                  </p>
+                  <p>
+                    <b>Gem. score:</b> {stats.avgScore}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
       <ResultsList results={filteredResults} loading={loading} />
     </div>
   );
