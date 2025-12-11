@@ -14,8 +14,8 @@ export default function AnalysisWizardPage() {
   const [checklistLoaded, setChecklistLoaded] = useState(false);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-10">
-      <h1 className="text-3xl font-bold">Jaarrekening Analyse</h1>
+    <main className="p-8 pt-28 max-w-6xl mx-auto space-y-10">
+      <h1 className="text-5xl font-sans font-bold">Jaarrekening Analyse</h1>
 
       {step === 1 && (
         <Step1Pdf
@@ -45,6 +45,6 @@ export default function AnalysisWizardPage() {
           sheetNames={sheetNames}
         />
       )}
-    </div>
+    </main>
   );
 }

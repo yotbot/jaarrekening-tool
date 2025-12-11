@@ -89,79 +89,103 @@ export default function Step1Pdf({
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow space-y-6">
-      <h2 className="text-xl font-semibold">Stap 1: Upload of kies PDF</h2>
+    <section className="p-6 bg-neutral-1 rounded-xl shadow space-y-6 font-sans">
+      <p className="uppercase font-mono mb-3 bg-tag-background inline-block px-5 py-3 rounded-full text-xs text-white">
+        Stap 1
+      </p>
+      <h2 className="text-3xl font-semibold">Upload of kies PDF</h2>
 
-      {/* --------------------
+      <div className="grid gap-6 sm:grid-cols-2">
+        {/* --------------------
           SELECT SAVED PDF
       --------------------- */}
-      <div className="space-y-2">
-        <label className="font-medium">Kies een eerder geüploade PDF</label>
+        <div>
+          <div className="bg-neutral-3 p-4 flex items-center justify-center">
+            <p className="font-semibold">Kies een eerder geüploade PDF</p>
+          </div>
 
-        {loadingSaved ? (
-          <p className="text-gray-500 text-sm">Laden…</p>
-        ) : savedPdfs.length === 0 ? (
-          <p className="text-gray-500 text-sm">
-            Je hebt nog geen opgeslagen PDF&apos;s.
-          </p>
-        ) : (
-          <select
-            className="border rounded p-2 w-full bg-white"
-            value={savedPdfId}
-            onChange={(e) => setSavedPdfId(e.target.value)}
-          >
-            <option value="">-- Selecteer opgeslagen PDF --</option>
-            {savedPdfs.map((p) => (
-              <option key={p.pdfId} value={p.pdfId}>
-                {p.name} ({p.pageCount ?? "?"} pagina's)
-              </option>
-            ))}
-          </select>
-        )}
+          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col">
+            {loadingSaved ? (
+              <p className="text-gray-500 text-sm">Laden…</p>
+            ) : savedPdfs.length === 0 ? (
+              <p className="text-gray-500 text-sm">
+                Je hebt nog geen opgeslagen PDF&apos;s.
+              </p>
+            ) : (
+              <select
+                className="border rounded p-2 w-full bg-white"
+                value={savedPdfId}
+                onChange={(e) => setSavedPdfId(e.target.value)}
+              >
+                <option value="">-- Selecteer opgeslagen PDF --</option>
+                {savedPdfs.map((p) => (
+                  <option key={p.pdfId} value={p.pdfId}>
+                    {p.name} ({p.pageCount ?? "?"} pagina's)
+                  </option>
+                ))}
+              </select>
+            )}
+            <button
+              onClick={handleUseSaved}
+              disabled={!savedPdfId}
+              className="px-12 py-6 font-mono uppercase rounded-xl text-sm font-medium border text-background bg-foreground cursor-pointer disabled:bg-neutral-3"
+            >
+              Gebruik geselecteerde PDF
+            </button>
+          </div>
+        </div>
 
-        <button
-          onClick={handleUseSaved}
-          disabled={!savedPdfId}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:bg-gray-300"
-        >
-          Gebruik geselecteerde PDF
-        </button>
-      </div>
-
-      <div className="border-t pt-6" />
-
-      {/* --------------------
+        {/* --------------------
           UPLOAD NEW PDF
       --------------------- */}
-      <div className="space-y-3">
-        <label className="font-medium">Upload een nieuwe PDF</label>
-
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
-        />
-
-        {processing && (
-          <div>
-            <div className="bg-gray-200 h-3 rounded-full overflow-hidden">
-              <div
-                className="bg-blue-600 h-3 transition-all"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="text-sm mt-1">{progress}% verwerken…</p>
+        <div>
+          <div className="bg-neutral-3 p-4 flex items-center justify-center">
+            <p className="font-semibold">Upload een nieuwe PDF</p>
           </div>
-        )}
+          <label className="font-medium hidden"></label>
+          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col">
+            {/* CUSTOM FILE INPUT */}
+            <label
+              className="
+    border border-foreground rounded-xl px-6 py-5 cursor-pointer 
+     hover:bg-neutral-2 transition flex flex-col items-center 
+    text-center gap-2 bg-white
+  "
+            >
+              <span className="font-semibold text-sm">
+                {pdfFile ? pdfFile.name : "Klik om PDF te selecteren"}
+              </span>
 
-        <button
-          onClick={handleUpload}
-          disabled={!pdfFile || processing}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300"
-        >
-          {processing ? "Bezig…" : "Upload & Verwerk"}
-        </button>
+              <input
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
+              />
+            </label>
+
+            {processing && (
+              <div>
+                <div className="bg-gray-200 h-3 rounded-full overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-3 transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="text-sm mt-1">{progress}% verwerken…</p>
+              </div>
+            )}
+
+            <button
+              onClick={handleUpload}
+              disabled={!pdfFile || processing}
+              className="px-12 py-6 font-mono uppercase rounded-xl text-sm font-medium border text-background bg-foreground cursor-pointer disabled:bg-neutral-3"
+            >
+              {processing ? "Bezig…" : "Upload & Verwerk"}
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

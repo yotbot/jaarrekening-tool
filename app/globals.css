@@ -54,8 +54,12 @@
 @theme inline {
   --color-background: var(--theme-background);
   --color-foreground: var(--theme-foreground);
+  --color-neutral-1: var(--theme-neutral-1);
   --color-neutral-3: var(--theme-neutral-3);
+  --color-neutral-4: var(--theme-neutral-4);
   --color-yellow: var(--theme-brand-4);
+
+  --color-tag-background: var(--theme-tag-background);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
