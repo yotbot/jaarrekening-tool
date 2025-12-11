@@ -19,23 +19,18 @@ export default function StepProgress({ step }: { step: number }) {
             <div
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center font-semibold 
-                transition-all border
+                transition-all 
               `}
               style={{
                 backgroundColor: isActive
                   ? "var(--theme-brand-3)"
                   : isDone
-                  ? "var(--theme-brand-1)"
+                  ? "var(--theme-brand-2)"
                   : "var(--theme-neutral-2)",
                 color:
                   isActive || isDone
                     ? "var(--theme-foreground-inverse)"
                     : "var(--theme-foreground)",
-                borderColor: isActive
-                  ? "var(--theme-brand-3)"
-                  : isDone
-                  ? "var(--theme-brand-1)"
-                  : "var(--theme-neutral-4)",
               }}
             >
               {s.id}
@@ -53,14 +48,7 @@ export default function StepProgress({ step }: { step: number }) {
 
             {/* LINE BETWEEN STEPS */}
             {i < steps.length - 1 && (
-              <div
-                className="flex-1 h-0.5 mx-4 rounded transition-all"
-                style={{
-                  backgroundColor: isDone
-                    ? "var(--theme-brand-1)"
-                    : "var(--theme-neutral-3)",
-                }}
-              />
+              <div className="flex-1 h-0.5 mx-4 bg-neutral-4 rounded transition-all" />
             )}
           </div>
         );

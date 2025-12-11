@@ -89,8 +89,8 @@ export default function Step1Pdf({
   };
 
   return (
-    <section className="p-6 bg-neutral-1 rounded-xl shadow space-y-6 font-sans">
-      <p className="uppercase font-mono mb-3 bg-tag-background inline-block px-5 py-3 rounded-full text-xs text-white">
+    <section className="p-6 bg-white rounded-xl space-y-6 font-sans">
+      <p className="uppercase font-mono mb-5 bg-tag-background inline-block px-5 py-3 rounded-full text-xs text-white">
         Stap 1
       </p>
       <h2 className="text-3xl font-semibold">Upload of kies PDF</h2>
@@ -103,6 +103,10 @@ export default function Step1Pdf({
           <div className="bg-neutral-3 p-4 flex items-center justify-center">
             <p className="font-semibold">Kies een eerder geüploade PDF</p>
           </div>
+
+          <label className="font-medium hidden">
+            Kies een eerder geüploade PDF
+          </label>
 
           <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col">
             {loadingSaved ? (
