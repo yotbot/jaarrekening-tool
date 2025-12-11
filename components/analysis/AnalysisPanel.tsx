@@ -16,20 +16,27 @@ export default function AnalysisPanel({
 }) {
   const [selectedSheet, setSelectedSheet] = useState(sheetNames[0] || "");
   const [filter, setFilter] = useState<"all" | "found" | "notfound">("all");
-  const [maxItems, setMaxItems] = useState(10);
+
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<AnalyseResult[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [statusMessage, setStatusMessage] = useState<string>("Idle");
 
-  const handleAnalyse = () => {
+  // --------------------------------------------
+  // Start analyse (maxItems kan null of number zijn)
+  // --------------------------------------------
+  const startAnalyse = (maxItems: number | null) => {
     setResults([]);
     setStatusMessage("Analyse gestart…");
     setProgress(0);
+    setLoading(true);
+
+    const maxItemsParam = maxItems === null ? "" : `&maxItems=${maxItems}`;
 
     const url = `/api/analyse/stream?pdfId=${pdfId}&checklistId=${checklistId}&sheet=${encodeURIComponent(
       selectedSheet
-    )}&maxItems=${maxItems}`;
+    )}${maxItemsParam}`;
+
     console.log("Starting analysis with URL:", url);
 
     const evt = new EventSource(url);
@@ -50,22 +57,38 @@ export default function AnalysisPanel({
         setResults(data.results);
         setStatusMessage("Analyse voltooid");
         setProgress(100);
+        setLoading(false);
         evt.close();
       }
 
       if (data.type === "error") {
         setStatusMessage("Fout: " + data.message);
+        setLoading(false);
         evt.close();
       }
     };
 
     evt.onerror = () => {
       setStatusMessage("Verbinding verbroken");
+      setLoading(false);
       evt.close();
     };
   };
 
+  // --------------------------------------------
+  // Stats voor donut
+  // --------------------------------------------
   function getSheetStats(results: AnalyseResult[]) {
+    if (results.length === 0) {
+      return {
+        total: 0,
+        found: 0,
+        notFound: 0,
+        avgScore: 0,
+        percent: 0,
+      };
+    }
+
     const total = results.length;
     const found = results.filter((r) => r.analyse?.gevonden).length;
     const notFound = total - found;
@@ -89,11 +112,16 @@ export default function AnalysisPanel({
           filter === "found" ? r.analyse.gevonden : !r.analyse.gevonden
         );
 
+  // --------------------------------------------
+  // UI
+  // --------------------------------------------
+
   return (
     <div className="p-6 bg-white rounded-xl shadow space-y-6">
       <h2 className="text-xl font-semibold">Analyse</h2>
 
-      <div className="flex gap-4 items-end">
+      {/* SHEET SELECTIE */}
+      <div className="flex gap-6 items-end">
         <div>
           <label className="text-sm">Sheet</label>
           <select
@@ -109,22 +137,22 @@ export default function AnalysisPanel({
           </select>
         </div>
 
-        <div>
-          <label className="text-sm">Aantal items</label>
-          <input
-            type="number"
-            className="border p-2 rounded w-20"
-            value={maxItems}
-            onChange={(e) => setMaxItems(Number(e.target.value))}
-          />
-        </div>
-
+        {/* BUTTON: Alleen 5 checks */}
         <button
-          onClick={handleAnalyse}
+          onClick={() => startAnalyse(5)}
           disabled={loading}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
         >
-          {loading ? "Analyseren..." : "Start analyse"}
+          {loading ? "…" : "Analyse eerste 5 checks"}
+        </button>
+
+        {/* BUTTON: Volledige analyse */}
+        <button
+          onClick={() => startAnalyse(null)}
+          disabled={loading}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:bg-gray-400"
+        >
+          {loading ? "…" : "Volledige analyse"}
         </button>
       </div>
 
@@ -142,6 +170,7 @@ export default function AnalysisPanel({
         </select>
       </div>
 
+      {/* PROGRESS BAR */}
       <div className="space-y-2">
         <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
           <div
@@ -149,12 +178,11 @@ export default function AnalysisPanel({
             style={{ width: `${progress}%` }}
           />
         </div>
-
         <p className="text-sm text-gray-600">{statusMessage}</p>
       </div>
 
-      {/* RESULTS */}
-      {results && (
+      {/* SCORE OVERVIEW */}
+      {results.length > 0 && (
         <div className="mt-8 p-6 bg-white rounded-xl shadow">
           <h3 className="text-lg font-semibold mb-4">
             Overzicht score voor: {selectedSheet}
@@ -189,6 +217,8 @@ export default function AnalysisPanel({
           })()}
         </div>
       )}
+
+      {/* RESULTATEN LIJST */}
       <ResultsList results={filteredResults} loading={loading} />
     </div>
   );

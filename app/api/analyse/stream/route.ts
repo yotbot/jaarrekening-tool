@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
   const checklistId = searchParams.get("checklistId");
   const sheet = searchParams.get("sheet");
   const maxItemsParam = searchParams.get("maxItems");
-  const maxItems = maxItemsParam ? Number(maxItemsParam) : 20;
+  const maxItems = maxItemsParam ? Number(maxItemsParam) : null;
 
   console.log(
     "🚀 Starting analysis stream for pdfId:",
@@ -175,9 +175,10 @@ export async function GET(req: NextRequest) {
 
         const checklist = checklistRaw as ChecklistItem[];
 
-        const items = checklist
-          .filter((c) => c.sheet === sheet)
-          .slice(0, maxItems);
+        const allItems = checklist.filter((c) => c.sheet === sheet);
+        // .slice(0, maxItems);
+
+        const items = maxItems ? allItems.slice(0, maxItems) : allItems;
 
         if (!items.length) {
           sendEvent(controller, {
