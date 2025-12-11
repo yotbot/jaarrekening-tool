@@ -60,6 +60,11 @@ export async function POST(req: NextRequest) {
 
     // 5. Store in KV
     await kv.set(`pdf:${userId}:${pdfId}:pages`, pagesWithEmbeddings);
+    await kv.set(`pdf:${userId}:${pdfId}:meta`, {
+      name: file.name,
+      uploadedAt: Date.now(),
+      pageCount: pages.length,
+    });
 
     console.log(`💾 Stored embedded PDF as: pdf:${pdfId}:pages`);
 
