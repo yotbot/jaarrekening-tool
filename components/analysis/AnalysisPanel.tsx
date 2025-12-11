@@ -15,26 +15,49 @@ export default function AnalysisPanel({
   const [maxItems, setMaxItems] = useState(10);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any[]>([]);
+  const [progress, setProgress] = useState<number>(0);
+  const [statusMessage, setStatusMessage] = useState<string>("Idle");
 
-  const handleAnalyse = async () => {
-    setLoading(true);
+  const handleAnalyse = () => {
     setResults([]);
+    setStatusMessage("Analyse gestart…");
+    setProgress(0);
 
-    const res = await fetch("/api/analyse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pdfId, sheet: selectedSheet, maxItems }),
-    });
+    const url = `/api/analyse/stream?pdfId=${pdfId}&sheet=${encodeURIComponent(
+      selectedSheet
+    )}&maxItems=${maxItems}`;
 
-    const data = await res.json();
-    setLoading(false);
+    const evt = new EventSource(url);
 
-    if (!data.ok) {
-      alert("Analyse mislukt");
-      return;
-    }
+    evt.onmessage = (e) => {
+      const data = JSON.parse(e.data);
 
-    setResults(data.results);
+      if (data.type === "progress") {
+        setStatusMessage(data.message);
+        if (typeof data.percent === "number") setProgress(data.percent);
+      }
+
+      if (data.type === "partial") {
+        setResults(data.results);
+      }
+
+      if (data.type === "done") {
+        setResults(data.results);
+        setStatusMessage("Analyse voltooid");
+        setProgress(100);
+        evt.close();
+      }
+
+      if (data.type === "error") {
+        setStatusMessage("Fout: " + data.message);
+        evt.close();
+      }
+    };
+
+    evt.onerror = () => {
+      setStatusMessage("Verbinding verbroken");
+      evt.close();
+    };
   };
 
   const filteredResults =
@@ -95,6 +118,17 @@ export default function AnalysisPanel({
           <option value="found">Gevonden</option>
           <option value="notfound">Niet gevonden</option>
         </select>
+      </div>
+
+      <div className="space-y-2">
+        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+          <div
+            className="bg-blue-600 h-3 transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        <p className="text-sm text-gray-600">{statusMessage}</p>
       </div>
 
       {/* RESULTS */}
