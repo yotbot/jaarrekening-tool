@@ -14,22 +14,21 @@ export default function AnalysisPanel({
   checklistId: string;
   sheetNames: string[];
 }) {
-  const [selectedSheet, setSelectedSheet] = useState(sheetNames[0] || "");
+  const [selectedSheet, setSelectedSheet] = useState(sheetNames[0] ?? "");
   const [filter, setFilter] = useState<"all" | "found" | "notfound">("all");
-
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<AnalyseResult[]>([]);
-  const [progress, setProgress] = useState<number>(0);
-  const [statusMessage, setStatusMessage] = useState<string>("Idle");
+  const [progress, setProgress] = useState(0);
+  const [statusMessage, setStatusMessage] = useState("Idle");
 
-  // --------------------------------------------
-  // Start analyse (maxItems kan null of number zijn)
-  // --------------------------------------------
+  // --------------------------------------------------
+  // Analyse starten
+  // --------------------------------------------------
   const startAnalyse = (maxItems: number | null) => {
-    setResults([]);
-    setStatusMessage("Analyse gestart…");
-    setProgress(0);
     setLoading(true);
+    setResults([]);
+    setProgress(0);
+    setStatusMessage("Analyse gestart…");
 
     const maxItemsParam = maxItems === null ? "" : `&maxItems=${maxItems}`;
 
@@ -37,16 +36,14 @@ export default function AnalysisPanel({
       selectedSheet
     )}${maxItemsParam}`;
 
-    console.log("Starting analysis with URL:", url);
-
     const evt = new EventSource(url);
 
     evt.onmessage = (e) => {
       const data = JSON.parse(e.data);
 
       if (data.type === "progress") {
-        setStatusMessage(data.message);
         if (typeof data.percent === "number") setProgress(data.percent);
+        if (data.message) setStatusMessage(data.message);
       }
 
       if (data.type === "partial") {
@@ -55,8 +52,8 @@ export default function AnalysisPanel({
 
       if (data.type === "done") {
         setResults(data.results);
-        setStatusMessage("Analyse voltooid");
         setProgress(100);
+        setStatusMessage("Analyse voltooid");
         setLoading(false);
         evt.close();
       }
@@ -75,26 +72,18 @@ export default function AnalysisPanel({
     };
   };
 
-  // --------------------------------------------
-  // Stats voor donut
-  // --------------------------------------------
-  function getSheetStats(results: AnalyseResult[]) {
-    if (results.length === 0) {
-      return {
-        total: 0,
-        found: 0,
-        notFound: 0,
-        avgScore: 0,
-        percent: 0,
-      };
-    }
+  // --------------------------------------------------
+  // Donut stats
+  // --------------------------------------------------
+  const getSheetStats = (results: AnalyseResult[]) => {
+    if (!results.length)
+      return { total: 0, found: 0, notFound: 0, avgScore: 0, percent: 0 };
 
     const total = results.length;
     const found = results.filter((r) => r.analyse?.gevonden).length;
     const notFound = total - found;
-
     const avgScore =
-      results.reduce((sum, r) => sum + (r.analyse?.score || 0), 0) / total;
+      results.reduce((s, r) => s + (r.analyse?.score ?? 0), 0) / total;
 
     return {
       total,
@@ -103,62 +92,62 @@ export default function AnalysisPanel({
       avgScore: Number(avgScore.toFixed(2)),
       percent: Math.round((found / total) * 100),
     };
-  }
+  };
 
+  // --------------------------------------------------
+  // Filtering
+  // --------------------------------------------------
   const filteredResults =
     filter === "all"
       ? results
       : results.filter((r) =>
-          filter === "found" ? r.analyse.gevonden : !r.analyse.gevonden
+          filter === "found" ? r.analyse?.gevonden : !r.analyse?.gevonden
         );
 
-  // --------------------------------------------
+  // --------------------------------------------------
   // UI
-  // --------------------------------------------
-
+  // --------------------------------------------------
   return (
-    <div className="p-6 bg-white rounded-xl shadow space-y-6">
-      <h2 className="text-xl font-semibold">Analyse</h2>
+    <div className="p-6 bg-white rounded-xl shadow space-y-8">
+      <h2 className="text-2xl font-semibold">Analyse</h2>
 
-      {/* SHEET SELECTIE */}
-      <div className="flex gap-6 items-end">
-        <div>
-          <label className="text-sm">Sheet</label>
+      {/* SHEET + ACTION BUTTONS */}
+      <div className="flex flex-wrap items-end gap-6">
+        <div className="flex flex-col">
+          <label className="text-sm font-medium mb-1">Sheet</label>
           <select
-            className="border p-2 rounded bg-white"
             value={selectedSheet}
             onChange={(e) => setSelectedSheet(e.target.value)}
+            className="border p-2 rounded bg-white"
           >
-            {sheetNames.map((s) => (
-              <option value={s} key={s}>
-                {s}
-              </option>
+            {sheetNames.map((name) => (
+              <option key={name}>{name}</option>
             ))}
           </select>
         </div>
 
-        {/* BUTTON: Alleen 5 checks */}
-        <button
-          onClick={() => startAnalyse(5)}
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
-        >
-          {loading ? "…" : "Analyse eerste 5 checks"}
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={() => startAnalyse(5)}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
+          >
+            {loading ? "…" : "Analyse eerste 5 checks"}
+          </button>
 
-        {/* BUTTON: Volledige analyse */}
-        <button
-          onClick={() => startAnalyse(null)}
-          disabled={loading}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:bg-gray-400"
-        >
-          {loading ? "…" : "Volledige analyse"}
-        </button>
+          <button
+            onClick={() => startAnalyse(null)}
+            disabled={loading}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:bg-gray-400"
+          >
+            {loading ? "…" : "Volledige analyse"}
+          </button>
+        </div>
       </div>
 
       {/* PROGRESS BAR */}
       <div className="space-y-2">
-        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
           <div
             className="bg-blue-600 h-3 transition-all"
             style={{ width: `${progress}%` }}
@@ -169,22 +158,23 @@ export default function AnalysisPanel({
 
       {/* SCORE OVERVIEW */}
       {results.length > 0 && (
-        <div className="mt-8 p-6 bg-white rounded-xl shadow">
-          <h3 className="text-lg font-semibold mb-4">
+        <div className="p-6 bg-gray-50 border rounded-xl space-y-4">
+          <h3 className="text-lg font-semibold">
             Overzicht score voor: {selectedSheet}
           </h3>
 
           {(() => {
             const stats = getSheetStats(results);
+
             return (
-              <div className="flex items-center gap-10">
+              <div className="flex items-center gap-12">
                 <ScoreDonut
                   found={stats.found}
                   notFound={stats.notFound}
                   percent={stats.percent}
                 />
 
-                <div className="space-y-2 text-gray-700">
+                <div className="space-y-1 text-gray-700">
                   <p>
                     <b>Totaal items:</b> {stats.total}
                   </p>
@@ -204,20 +194,21 @@ export default function AnalysisPanel({
         </div>
       )}
 
-      {/* RESULTATEN LIJST */}
       {/* FILTERS */}
-      <div className="flex gap-4">
-        <label>Filter:</label>
+      <div className="flex items-center gap-4">
+        <label className="text-gray-700 font-medium">Filter:</label>
         <select
           className="border p-2 rounded bg-white"
           value={filter}
           onChange={(e) => setFilter(e.target.value as any)}
         >
           <option value="all">Alles</option>
-          <option value="found">Gevonden</option>
-          <option value="notfound">Niet gevonden</option>
+          <option value="found">✔ Gevonden</option>
+          <option value="notfound">✘ Niet gevonden</option>
         </select>
       </div>
+
+      {/* RESULT LIST */}
       <ResultsList results={filteredResults} loading={loading} />
     </div>
   );
