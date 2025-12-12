@@ -107,10 +107,22 @@ export function parseChecklistExcel(buffer: Buffer): ParsedChecklist {
       const hasID = isID(grootVal) || isID(middenVal) || isID(kleinVal);
       if (!hasID) continue;
 
-      // subvraag (begint met "-")
-      if (vraagRaw.startsWith("-")) {
+      // SUBVRAAG: "-" OR "a." / "b." / "c." etc.
+      const isDashSub = vraagRaw.trim().startsWith("-");
+
+      // STRICT letter+dot pattern: a. b. c. … z.
+      const isLetterSub = /^[a-zA-Z]\.\s+/.test(vraagRaw.trim());
+
+      if (isDashSub || isLetterSub) {
         if (currentItem) {
-          const sub = vraagRaw.replace(/^-+\s*/, "").trim();
+          const sub = vraagRaw
+            .trim()
+            // remove leading "-" or "--"
+            .replace(/^[-]+\s*/, "")
+            // remove leading "a. " or "B. "
+            .replace(/^[a-zA-Z]\.\s+/, "")
+            .trim();
+
           if (sub) currentItem.subvragen.push(sub);
         }
         continue;
