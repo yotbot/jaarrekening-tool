@@ -10,7 +10,7 @@ export default function WaveHero() {
       <div className="pointer-events-none absolute top-32 right-1/4 w-[300px] h-[300px] rounded-full blur-[80px]" />
 
       {/* CONTENT */}
-      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-6 flex flex-col gap-16">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-16 flex flex-col gap-16">
         {/* HEADER / NAV */}
         <header className="flex items-center justify-between">
           <Link

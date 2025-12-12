@@ -18,7 +18,7 @@ export default function Header() {
         {/* LOGO */}
         <Link
           href="/"
-          className="text-md text-gray-900 hover:text-blue-600 transition-colors"
+          className="text-md text-gray-900 hover:underline transition-colors"
         >
           Home
         </Link>
@@ -27,7 +27,7 @@ export default function Header() {
         <nav className="flex items-center gap-6">
           <Link
             href="/analysis"
-            className="text-sm text-gray-800 hover:text-blue-600 transition-colors"
+            className="text-sm text-gray-800 hover:underline transition-colors"
           >
             Analyse
           </Link>
@@ -37,10 +37,10 @@ export default function Header() {
             <SignInButton mode="modal">
               <button
                 className="
-                  px-4 py-2 rounded-lg
-                  bg-blue-600 text-white 
-                  hover:bg-blue-700 
-                  transition-colors shadow-sm
+                  px-6 py-3 rounded-lg
+                  bg-black text-white 
+                  hover:bg-neutral-3 hover:text-black 
+                  transition shadow-sm font-mono uppercase text-sm cursor-pointer
               "
               >
                 Inloggen

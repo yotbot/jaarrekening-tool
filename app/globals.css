@@ -58,6 +58,7 @@
   --color-neutral-3: var(--theme-neutral-3);
   --color-neutral-4: var(--theme-neutral-4);
   --color-yellow: var(--theme-brand-4);
+  --color-orange: var(--theme-brand-3);
   --color-green: var(--theme-brand-2);
 
   --color-tag-background: var(--theme-tag-background);
