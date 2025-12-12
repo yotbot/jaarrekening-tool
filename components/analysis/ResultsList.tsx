@@ -12,6 +12,7 @@ type AnalyseData = {
   score?: number;
   pagina?: number | null;
   uitleg?: string;
+  bron?: string;
 };
 
 export type ResultItem = {
@@ -71,7 +72,11 @@ export default function ResultsList({
 
               <p className="text-sm text-foreground font-sans mt-3">
                 <b>Uitleg: </b>
-                {r.analyse?.uitleg}
+                {r.analyse?.uitleg ?? "—"}
+              </p>
+              <p className="text-sm text-foreground font-sans mt-3">
+                <b>Bron: </b>
+                {r.analyse?.bron ?? "—"}
               </p>
             </div>
           </details>

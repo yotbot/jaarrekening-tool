@@ -33,6 +33,7 @@ export type LlmResultItem = {
   score: number;
   pagina: number | null;
   uitleg: string;
+  bron?: string;
 };
 
 export type AnalyseResult = {
@@ -40,6 +41,7 @@ export type AnalyseResult = {
   subvragen: string[];
   relevantPages: RelevantPage[];
   analyse: LlmResultItem;
+  bron?: string;
 };
 
 export type RagBundle = {
@@ -47,6 +49,7 @@ export type RagBundle = {
   subvragen: string[];
   relevantPages: RelevantPage[];
   contextText: string;
+  bron?: string;
 };
 
 export type SseEventPayload =
@@ -247,6 +250,7 @@ export async function GET(req: NextRequest) {
             subvragen: it.subvragen ?? [],
             relevantPages,
             contextText,
+            bron: it.bron,
           });
         }
 
@@ -349,6 +353,7 @@ ${q.contextText}
                       ? llmItem.uitleg
                       : "Analyse ontbreekt of model-output had een ongeldig formaat.",
                   vraag: llmItem.vraag ?? q.vraag,
+                  bron: q.bron,
                 }
               : {
                   gevonden: false,
@@ -357,6 +362,7 @@ ${q.contextText}
                   uitleg:
                     "Analyse ontbreekt of model-output was leeg voor deze vraag.",
                   vraag: q.vraag,
+                  bron: q.bron,
                 };
 
             finalResults.push({
@@ -364,6 +370,7 @@ ${q.contextText}
               subvragen: q.subvragen,
               relevantPages: q.relevantPages,
               analyse,
+              bron: q.bron,
             });
           });
 
