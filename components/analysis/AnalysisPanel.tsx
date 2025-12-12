@@ -109,7 +109,7 @@ export default function AnalysisPanel({
   // UI
   // --------------------------------------------------
   return (
-    <div className="px-3 py-6 md:p-6 bg-white rounded-xl shadow space-y-4">
+    <div className="px-3 py-6 md:p-6 bg-white rounded-xl shadow space-y-4 text-foreground">
       <div>
         <dl className="grid gap-6 sm:grid-cols-3 font-mono">
           <div>

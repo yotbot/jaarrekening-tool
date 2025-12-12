@@ -93,9 +93,11 @@ export default function Step1Pdf({
       <p className="uppercase font-mono mb-5 bg-tag-background inline-block px-5 py-3 rounded-full text-xs text-white">
         Stap 1
       </p>
-      <h2 className="text-3xl font-semibold">Upload of kies PDF</h2>
+      <h2 className="text-3xl font-semibold text-foreground">
+        Upload of kies PDF
+      </h2>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 text-foreground">
         {/* --------------------
           SELECT SAVED PDF
       --------------------- */}

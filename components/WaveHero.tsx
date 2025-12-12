@@ -66,7 +66,7 @@ export default function WaveHero() {
               body: "Begrijp in één oogopslag wat wel en niet is toegelicht.",
             },
           ].map((f, i) => (
-            <div key={i} className="transition">
+            <div key={i} className="transition text-foreground">
               <div className="bg-neutral-3 p-4 flex items-center justify-center">
                 <h3 className="font-sans font-semibold">{f.title}</h3>
               </div>

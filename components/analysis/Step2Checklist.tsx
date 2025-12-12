@@ -108,7 +108,9 @@ export default function Step2Checklist({
       <p className="uppercase font-mono mb-5 bg-tag-background inline-block px-5 py-3 rounded-full text-xs text-white">
         Stap 2
       </p>
-      <h2 className="text-3xl font-semibold">Checklist uploaden of kiezen</h2>
+      <h2 className="text-3xl font-semibold text-foreground">
+        Checklist uploaden of kiezen
+      </h2>
 
       <div className="grid gap-6 sm:grid-cols-2">
         {/* ------------------------------
@@ -123,7 +125,7 @@ export default function Step2Checklist({
             Gebruik een eerdere checklist
           </label>
 
-          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col">
+          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col text-foreground">
             {loadingSaved ? (
               <p className="text-sm text-gray-500">Laden…</p>
             ) : savedChecklists.length === 0 ? (
