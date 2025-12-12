@@ -112,7 +112,7 @@ export default function Step2Checklist({
         Checklist uploaden of kiezen
       </h2>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 text-foreground">
         {/* ------------------------------
           Saved checklist selection
       ------------------------------- */}
@@ -125,7 +125,7 @@ export default function Step2Checklist({
             Gebruik een eerdere checklist
           </label>
 
-          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col text-foreground">
+          <div className="px-6 py-10 border border-neutral-3 space-y-6 flex flex-col">
             {loadingSaved ? (
               <p className="text-sm text-gray-500">Laden…</p>
             ) : savedChecklists.length === 0 ? (
