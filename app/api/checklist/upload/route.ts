@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       ok: true,
       itemCount: items.length,
       sheetNames,
+      checklistId,
     });
   } catch (err: any) {
     console.error("❌ /api/checklist/upload error:", err);
