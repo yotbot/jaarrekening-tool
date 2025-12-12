@@ -109,7 +109,7 @@ export default function AnalysisPanel({
   // UI
   // --------------------------------------------------
   return (
-    <div className="p-6 bg-white rounded-xl shadow space-y-4">
+    <div className="px-3 py-6 md:p-6 bg-white rounded-xl shadow space-y-4">
       <div>
         <dl className="grid gap-6 sm:grid-cols-3 font-mono">
           <div>
@@ -128,7 +128,7 @@ export default function AnalysisPanel({
       </div>
 
       {/* SHEET + ACTION BUTTONS */}
-      <div className="grid sm:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-3 md:gap-6">
         <div className="flex flex-col">
           <label className="text-sm font-mono mb-1">Sheet</label>
           <select
@@ -180,7 +180,7 @@ export default function AnalysisPanel({
             const stats = getSheetStats(results);
 
             return (
-              <div className="flex items-center gap-12">
+              <div className="flex flex-col md:flex-row items-center md:gap-12">
                 <ScoreDonut
                   found={stats.found}
                   notFound={stats.notFound}

@@ -8,8 +8,8 @@ export default function FilterBar({
   setFilter: (v: "all" | "found" | "notfound") => void;
 }) {
   return (
-    <div className="inline-block bg-neutral-3 p-2 rounded-full">
-      <div className="flex gap-3 ">
+    <div className="inline-block bg-neutral-3 md:p-2 rounded-full">
+      <div className="flex md:gap-3 ">
         {[
           { key: "all", label: "Alles" },
           { key: "found", label: "✔ Gevonden" },

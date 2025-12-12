@@ -14,7 +14,7 @@ export default function Header() {
         border-b border-white/20 font-mono uppercase tracking-wide
       "
     >
-      <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
         {/* LOGO */}
         <Link
           href="/"

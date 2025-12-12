@@ -8,7 +8,7 @@ export default function StepProgress({ step }: { step: number }) {
   ];
 
   return (
-    <div className="flex items-center justify-between max-w-6xl mx-auto py-2">
+    <div className="flex items-center justify-between max-w-6xl px-2 md:px-0 mx-auto my-2 md:my-6 py-2">
       {steps.map((s, i) => {
         const isActive = s.id === step;
         const isDone = s.id < step;
@@ -18,7 +18,7 @@ export default function StepProgress({ step }: { step: number }) {
             {/* STEP BUBBLE */}
             <div
               className={`
-                w-10 h-10 rounded-full flex items-center justify-center font-semibold 
+                w-5 h-5 md:w-10 md:h-10 md:rounded-full flex items-center justify-center font-semibold 
                 transition-all 
               `}
               style={{
@@ -37,9 +37,9 @@ export default function StepProgress({ step }: { step: number }) {
             </div>
 
             {/* LABEL */}
-            <div className="ml-3">
+            <div className="ml-2 md:ml-3">
               <p
-                className="text-sm font-mono"
+                className="text-xs md:text-sm font-mono"
                 style={{ color: "var(--theme-foreground)" }}
               >
                 {s.label}
@@ -48,7 +48,7 @@ export default function StepProgress({ step }: { step: number }) {
 
             {/* LINE BETWEEN STEPS */}
             {i < steps.length - 1 && (
-              <div className="flex-1 h-0.5 mx-4 bg-neutral-4 rounded transition-all" />
+              <div className="hidden md:block flex-1 h-0.5 mx-4 bg-neutral-4 rounded transition-all" />
             )}
           </div>
         );

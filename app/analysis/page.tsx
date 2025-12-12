@@ -16,7 +16,7 @@ export default function AnalysisWizardPage() {
 
   return (
     <div className="w-full min-h-svh bg-neutral-1">
-      <main className="p-8 pt-28 max-w-6xl mx-auto space-y-10">
+      <main className="px-2 md:px-8 pt-20 md:pt-28 max-w-6xl mx-auto space-y-4 md:space-y-10">
         <h1 className="text-5xl font-sans font-bold">Jaarrekening Analyse</h1>
 
         <StepProgress step={step} />
